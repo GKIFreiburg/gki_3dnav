@@ -1,7 +1,7 @@
 <library path="lib/libgki_3dnav_planner">
   <class name="gki_3dnav_planner/GKI3dNavPlanner" type="gki_3dnav_planner::GKI3dNavPlanner" base_class_type="nav_core::BaseGlobalPlanner">
     <description>
-      An implmentation of a search-based planning using anytime a* and a lattice graph with 3d collision checking
+      An implementation of a search-based planning using anytime a* and a lattice graph with 3d collision checking
     </description>
   </class>
 </library>

@@ -1,0 +1,15 @@
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+get frame from costmap
+envcfg sinnvoll fuellen, Grid2d mit max(possiblewheelcells height)-height
+initialize stuff angucken (initEnv, initGeneral,...) + sinnvoll ersetzen
+write new ReadConfiguration, EnsureHeuristicsUpdated, SetMap,  
+fix theta in actions
+
+code aufraeumen
+karten erzeugen
+
+analyze_queries.py umschreiben (parameter variabel)
+laufen lassen

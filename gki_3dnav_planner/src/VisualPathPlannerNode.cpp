@@ -35,22 +35,22 @@ VisualPathPlannerNode::VisualPathPlannerNode()
 //    scene_monitor->startWorldGeometryMonitor("/move_group/collision_object", "/move_group/planning_scene_world");
 //    scene_monitor->startSceneMonitor("/move_group/monitored_planning_scene");
     scene_monitor->requestPlanningSceneState("/get_planning_scene");
-	collision_detection::AllowedCollisionMatrix& allowed_collisions = scene_monitor->getPlanningScene()->getAllowedCollisionMatrixNonConst();
-	//allowed_collisions.setDefaultEntry("br_caster_r_wheel_link", true);
-	std::vector<std::string> wheel_links;
-	wheel_links.push_back("br_caster_r_wheel_link");
-	wheel_links.push_back("br_caster_l_wheel_link");
-	wheel_links.push_back("bl_caster_r_wheel_link");
-	wheel_links.push_back("bl_caster_l_wheel_link");
-	wheel_links.push_back("fr_caster_r_wheel_link");
-	wheel_links.push_back("fr_caster_l_wheel_link");
-	wheel_links.push_back("fl_caster_r_wheel_link");
-	wheel_links.push_back("fl_caster_l_wheel_link");
-	forEach(const std::string& link, wheel_links)
-	{
-		//allowed_collisions.setEntry(link, "<octomap>", true);
-		//allowed_collisions.setDefaultEntry(link, true);
-	}
+    collision_detection::AllowedCollisionMatrix& allowed_collisions = scene_monitor->getPlanningScene()->getAllowedCollisionMatrixNonConst();
+    //allowed_collisions.setDefaultEntry("br_caster_r_wheel_link", true);
+    std::vector<std::string> wheel_links;
+    wheel_links.push_back("br_caster_r_wheel_link");
+    wheel_links.push_back("br_caster_l_wheel_link");
+    wheel_links.push_back("bl_caster_r_wheel_link");
+    wheel_links.push_back("bl_caster_l_wheel_link");
+    wheel_links.push_back("fr_caster_r_wheel_link");
+    wheel_links.push_back("fr_caster_l_wheel_link");
+    wheel_links.push_back("fl_caster_r_wheel_link");
+    wheel_links.push_back("fl_caster_l_wheel_link");
+    forEach(const std::string& link, wheel_links)
+    {
+        //allowed_collisions.setEntry(link, "<octomap>", true);
+        //allowed_collisions.setDefaultEntry(link, true);
+    }
     planning_scene_publisher = ros::NodeHandle().advertise<moveit_msgs::PlanningScene>("/test/planning_scene", 3);
     //scene_monitor->startPublishingPlanningScene(planning_scene_monitor::PlanningSceneMonitor::UPDATE_SCENE, "planning_scene");
 
@@ -128,62 +128,62 @@ VisualPathPlannerNode::~VisualPathPlannerNode()
 
 void VisualPathPlannerNode::loadMap()
 {
-	moveit_msgs::LoadMap load_map_srv;
-	load_map_srv.request.filename = ros::package::getPath("tidyup_demo_launch") + "/maps/octomap.bt";
-	ROS_INFO_STREAM("loading map: "<<load_map_srv.request.filename);
-	ros::service::call("/move_group/load_map", load_map_srv);
-	ROS_INFO_STREAM("result: "<<(load_map_srv.response.success? "success" : "failure" ));
+    moveit_msgs::LoadMap load_map_srv;
+    load_map_srv.request.filename = ros::package::getPath("tidyup_demo_launch") + "/maps/octomap.bt";
+    ROS_INFO_STREAM("loading map: "<<load_map_srv.request.filename);
+    ros::service::call("/move_group/load_map", load_map_srv);
+    ROS_INFO_STREAM("result: "<<(load_map_srv.response.success? "success" : "failure" ));
 }
 
 void VisualPathPlannerNode::updatePose(geometry_msgs::Pose pose)
 {
-	tf::Pose robot_pose_tf;
-	Eigen::Affine3d robot_pose_eigen;
-	pose.position.z = 0;
-	tf::poseMsgToTF(pose, robot_pose_tf);
-	tf::transformTFToEigen(robot_pose_tf, robot_pose_eigen);
-	robot_state::RobotState& robot_state = scene->getCurrentStateNonConst();
-	robot_state.updateStateWithLinkAt("base_footprint", robot_pose_eigen);
-	robot_state.updateCollisionBodyTransforms();
-	scene->setCurrentState(robot_state);
+    tf::Pose robot_pose_tf;
+    Eigen::Affine3d robot_pose_eigen;
+    pose.position.z = 0;
+    tf::poseMsgToTF(pose, robot_pose_tf);
+    tf::transformTFToEigen(robot_pose_tf, robot_pose_eigen);
+    robot_state::RobotState& robot_state = scene->getCurrentStateNonConst();
+    robot_state.updateStateWithLinkAt("base_footprint", robot_pose_eigen);
+    robot_state.updateCollisionBodyTransforms();
+    scene->setCurrentState(robot_state);
 }
 
 void VisualPathPlannerNode::attachBody()
 {
-	ROS_INFO_STREAM("attach_body");
-	collision_detection::WorldPtr world = scene->getWorldNonConst();
-	collision_detection::World::ObjectConstPtr object = world->getObject("coke_1");
-	world->removeObject(object->id_);
-	world_coke_poses = object->shape_poses_;
-	robot_state::RobotState& robot_state = scene->getCurrentStateNonConst();
-	tf::Pose attach_pose_tf(tf::createIdentityQuaternion(), tf::Vector3(0, 0, -0.05));
-	Eigen::Affine3d attach_pose_eigen;
-	tf::poseTFToEigen(attach_pose_tf, attach_pose_eigen);
-	EigenSTL::vector_Affine3d attach_trans;
-	attach_trans.push_back(attach_pose_eigen);
+    ROS_INFO_STREAM("attach_body");
+    collision_detection::WorldPtr world = scene->getWorldNonConst();
+    collision_detection::World::ObjectConstPtr object = world->getObject("coke_1");
+    world->removeObject(object->id_);
+    world_coke_poses = object->shape_poses_;
+    robot_state::RobotState& robot_state = scene->getCurrentStateNonConst();
+    tf::Pose attach_pose_tf(tf::createIdentityQuaternion(), tf::Vector3(0, 0, -0.05));
+    Eigen::Affine3d attach_pose_eigen;
+    tf::poseTFToEigen(attach_pose_tf, attach_pose_eigen);
+    EigenSTL::vector_Affine3d attach_trans;
+    attach_trans.push_back(attach_pose_eigen);
 
-//	const moveit::core::JointModelGroup* group = robot_state.getRobotModel()->getEndEffector("right_eef");
-//	ROS_INFO_STREAM(group->getEndEffectorName());
-//	BOOST_FOREACH(const std::string& name, group->getLinkModelNamesWithCollisionGeometry())
-//	{
-//		ROS_INFO_STREAM(name);
-//	}
+//    const moveit::core::JointModelGroup* group = robot_state.getRobotModel()->getEndEffector("right_eef");
+//    ROS_INFO_STREAM(group->getEndEffectorName());
+//    BOOST_FOREACH(const std::string& name, group->getLinkModelNamesWithCollisionGeometry())
+//    {
+//        ROS_INFO_STREAM(name);
+//    }
 
-	const std::vector<std::string>& names = robot_state.getRobotModel()->getEndEffector("right_eef")->getLinkModelNamesWithCollisionGeometry();
-	std::set<std::string> touch_links;
-	touch_links.insert(names.begin(), names.end());
-	std::string link_name = "r_gripper_tool_frame";
-	robot_state.attachBody(object->id_, object->shapes_, attach_trans, touch_links, link_name);
+    const std::vector<std::string>& names = robot_state.getRobotModel()->getEndEffector("right_eef")->getLinkModelNamesWithCollisionGeometry();
+    std::set<std::string> touch_links;
+    touch_links.insert(names.begin(), names.end());
+    std::string link_name = "r_gripper_tool_frame";
+    robot_state.attachBody(object->id_, object->shapes_, attach_trans, touch_links, link_name);
 }
 
 void VisualPathPlannerNode::detachBody()
 {
-	ROS_INFO_STREAM("detach_body");
-	collision_detection::WorldPtr world = scene->getWorldNonConst();
-	robot_state::RobotState& robot_state = scene->getCurrentStateNonConst();
-	const moveit::core::AttachedBody* object = robot_state.getAttachedBody("coke_1");
-	world->addToObject(object->getName(), object->getShapes(), world_coke_poses);
-	robot_state.clearAttachedBody(object->getName());
+    ROS_INFO_STREAM("detach_body");
+    collision_detection::WorldPtr world = scene->getWorldNonConst();
+    robot_state::RobotState& robot_state = scene->getCurrentStateNonConst();
+    const moveit::core::AttachedBody* object = robot_state.getAttachedBody("coke_1");
+    world->addToObject(object->getName(), object->getShapes(), world_coke_poses);
+    robot_state.clearAttachedBody(object->getName());
 }
 
 void VisualPathPlannerNode::processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr& feedback)
@@ -215,25 +215,25 @@ void VisualPathPlannerNode::processFeedback(const visualization_msgs::Interactiv
     orange.b = 0;
 
     visualization_msgs::MarkerArray visual_array;
-//	robot_state.getRobotMarkers(visual_array, link_names, yellow, "initial", ros::Duration(10), true);
+//    robot_state.getRobotMarkers(visual_array, link_names, yellow, "initial", ros::Duration(10), true);
 //    visualization_publisher.publish(visual_array);
 //    visual_array = visualization_msgs::MarkerArray();
     moveit_msgs::PlanningScene scene_msg;
     std::vector<std::string> names;
-//	names = robot_state.getRobotModel()->getJointModelGroupNames();
-	const moveit::core::JointModelGroup* group = robot_state.getJointModelGroup("right_gripper");
-//	names = group->getLinkModelNames();
-	names = group->getJointModelNames();
-	names = robot_state.getVariableNames();
-	robot_state.setVariablePosition("torso_lift_joint", 0.25);
-	robot_state.update();
+//    names = robot_state.getRobotModel()->getJointModelGroupNames();
+    const moveit::core::JointModelGroup* group = robot_state.getJointModelGroup("right_gripper");
+//    names = group->getLinkModelNames();
+    names = group->getJointModelNames();
+    names = robot_state.getVariableNames();
+    robot_state.setVariablePosition("torso_lift_joint", 0.25);
+    robot_state.update();
 
     switch (feedback->event_type)
     {
     case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK:
 //        for(int i = 0; i < names.size(); i++)
 //        {
-//        	ROS_INFO_STREAM(names[i]);
+//            ROS_INFO_STREAM(names[i]);
 //        }
 
 //        robot_pose_eigen = planning_scene->getTransforms().getTransform("/base_footprint");
@@ -243,7 +243,7 @@ void VisualPathPlannerNode::processFeedback(const visualization_msgs::Interactiv
 //        for_each(const std::string& link_name, link_names2)
 
 //        {
-//        	ROS_INFO_STREAM(link_name);
+//            ROS_INFO_STREAM(link_name);
 //        }
         //planning_scene->
 //        planning_scene->checkCollision(request, result);
@@ -280,24 +280,24 @@ void VisualPathPlannerNode::processFeedback(const visualization_msgs::Interactiv
     case visualization_msgs::InteractiveMarkerFeedback::MOUSE_DOWN:
         break;
     case visualization_msgs::InteractiveMarkerFeedback::MOUSE_UP:
-    	updatePose(feedback->pose);
-   		//attachBody();
-   		//detachBody();
-    	//robot_state.getRobotMarkers(visual_array, link_names, yellow, "initial", ros::Duration(10), true);
-    	request.contacts = true;
-    	scene->checkCollision(request, result);
+        updatePose(feedback->pose);
+           //attachBody();
+           //detachBody();
+        //robot_state.getRobotMarkers(visual_array, link_names, yellow, "initial", ros::Duration(10), true);
+        request.contacts = true;
+        scene->checkCollision(request, result);
         if (result.collision)
         {
-        	robot_state.getRobotMarkers(visual_array, link_names, orange, "collision", ros::Duration(10), true);
-        	for (collision_detection::CollisionResult::ContactMap::const_iterator it = result.contacts.begin(); it != result.contacts.end(); it++)
-        	{
-        		const std::pair<std::string, std::string>& contact_info = it->first;
-        		ROS_INFO_STREAM(contact_info.first<<" !=! "<<contact_info.second);
-        	}
+            robot_state.getRobotMarkers(visual_array, link_names, orange, "collision", ros::Duration(10), true);
+            for (collision_detection::CollisionResult::ContactMap::const_iterator it = result.contacts.begin(); it != result.contacts.end(); it++)
+            {
+                const std::pair<std::string, std::string>& contact_info = it->first;
+                ROS_INFO_STREAM(contact_info.first<<" !=! "<<contact_info.second);
+            }
         }
         else
         {
-        	robot_state.getRobotMarkers(visual_array, link_names, teal, "moved", ros::Duration(10), true);
+            robot_state.getRobotMarkers(visual_array, link_names, teal, "moved", ros::Duration(10), true);
         }
         visualization_publisher.publish(visual_array);
 

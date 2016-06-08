@@ -13,21 +13,25 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   std_msgs
   std_srvs
-  #sbpl
+  nav_msgs
   visualization_msgs
+  color_tools
+  angles
+  timing
   interactive_markers
+  freespace_mechanism_heuristic
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-include_directories(SYSTEM ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE_DIRS})
-include_directories(${catkin_INCLUDE_DIRS})
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SBPL REQUIRED sbpl)
 include_directories(${SBPL_INCLUDE_DIRS})
 link_directories(${SBPL_LIBRARY_DIRS})
 
+include_directories(SYSTEM ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -59,18 +63,17 @@ link_directories(${SBPL_LIBRARY_DIRS})
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  PlannerStat.msg
+  PlannerStats.msg
+)
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  SampleValidPoses.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -80,10 +83,10 @@ link_directories(${SBPL_LIBRARY_DIRS})
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   moveit_msgs#   nav_msgs#   std_msgs#   visualization_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  moveit_msgs geometry_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -96,7 +99,7 @@ link_directories(${SBPL_LIBRARY_DIRS})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES gki_3dnav_planner 
+  LIBRARIES sbpl_xytheta_planner gki_3dnav_planner 
   CATKIN_DEPENDS moveit_msgs nav_core nav_msgs std_msgs std_srvs visualization_msgs
   DEPENDS system_lib
 )
@@ -105,34 +108,48 @@ catkin_package(
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 add_definitions(${EIGEN_DEFINITIONS})
 
-## Declare a cpp library
+add_library(sbpl_xytheta_planner
+    src/sbpl_xytheta_planner.cpp
+    src/environment_navxythetalat_generic.cpp
+)
+target_link_libraries(sbpl_xytheta_planner
+    ${catkin_LIBRARIES}
+    ${SBPL_LIBRARIES} 
+    ${Boost_LIBRARIES})
+
 add_library(gki_3dnav_planner
     src/environment_xyt_3d_collisions.cpp
+    src/environment_navxythetalat_moveit.cpp
     src/3dnav_planner.cpp
 )
-
-## Declare a cpp executable
-add_executable(visual_path_planning_node src/VisualPathPlannerNode.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(gki_3dnav_planner_node gki_3dnav_planner_generate_messages_cpp)
-#add_dependencies(visual_path_planning_node full_body_nav_msgs_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
+add_dependencies(gki_3dnav_planner gki_3dnav_planner_generate_messages_cpp)
 target_link_libraries(gki_3dnav_planner
 	${catkin_LIBRARIES}
 	${SBPL_LIBRARIES} 
 	${Boost_LIBRARIES}
+    sbpl_xytheta_planner
 )
+
+add_executable(sample_valid_poses
+    src/sample_valid_poses.cpp)
+target_link_libraries(sample_valid_poses
+    ${catkin_LIBRARIES})
+add_dependencies(sample_valid_poses gki_3dnav_planner_generate_messages_cpp)
+
+add_executable(evaluate_pose_queries
+    src/evaluate_pose_queries.cpp)
+target_link_libraries(evaluate_pose_queries
+    ${catkin_LIBRARIES}
+    yaml-cpp)
+add_dependencies(evaluate_pose_queries gki_3dnav_planner_generate_messages_cpp)
+
+add_executable(visual_path_planning_node src/VisualPathPlannerNode.cpp)
 target_link_libraries(visual_path_planning_node
 	${catkin_LIBRARIES}
 	${Boost_LIBRARIES}

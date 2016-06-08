@@ -1,6 +1,26 @@
 GKI3dNavPlanner:
   environment_type: XYT_3dCollisions
   planner_type: ARAPlanner
-  allocated_time: 10.0
+  allocated_time: 20.0
   initial_epsilon: 5.0
   forward_search: true
+  use_freespace_heuristic: true
+  freespace_costmap_out_of_map_behavior: euclidean_append
+  track_expansions: true
+  force_scratch_limit: 0
+  #expansion_color_scheme: occupancy
+  expansion_color_scheme: costmap
+  trans_vel: 0.4
+  rot_vel: 1.3089969389957471827
+
+  scene_update_name: /get_planning_scene
+  allowed_collision_links:
+    - br_caster_r_wheel_link
+    - br_caster_l_wheel_link
+    - bl_caster_r_wheel_link
+    - bl_caster_l_wheel_link
+    - fr_caster_r_wheel_link
+    - fr_caster_l_wheel_link
+    - fl_caster_r_wheel_link
+    - fl_caster_l_wheel_link
+

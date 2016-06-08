@@ -13,9 +13,15 @@ raytrace_range: 3.0
 footprint: [[-0.325, -0.325], [-0.325, 0.325], [0.325, 0.325], [0.46, 0.0], [0.325, -0.325]]
 #robot_radius: 0.46
 footprint_padding: 0.01
-inflation_radius: 0.55
-cost_scaling_factor: 10.0
+#inflation_radius: 0.55
+#cost_scaling_factor: 10.0
 lethal_cost_threshold: 100
 observation_sources: base_scan
+track_unknown_space: true
+
+inflation_layer:
+  cost_scaling_factor: 4.5
+  inflation_radius: 1.5
+
 base_scan: {data_type: LaserScan, expected_update_rate: 0.4,
   observation_persistence: 0.0, marking: true, clearing: true, max_obstacle_height: 0.4, min_obstacle_height: 0.08}

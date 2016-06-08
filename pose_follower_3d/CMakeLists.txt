@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 #  sbpl_3dnav_planner
   full_body_nav_msgs
   visualization_msgs
+  roscpp
 )
 
 ## System dependencies are found with CMake's conventions
