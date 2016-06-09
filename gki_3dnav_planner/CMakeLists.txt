@@ -100,7 +100,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sbpl_xytheta_planner gki_3dnav_planner 
-  CATKIN_DEPENDS moveit_msgs nav_core nav_msgs std_msgs std_srvs visualization_msgs
+  CATKIN_DEPENDS moveit_msgs nav_core nav_msgs std_msgs std_srvs visualization_msgs freespace_mechanism_heuristic timing
   DEPENDS system_lib
 )
 

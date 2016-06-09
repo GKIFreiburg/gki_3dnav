@@ -82,7 +82,7 @@ EnvironmentNavXYThetaLatGeneric* GKI3dNavPlanner::createEnvironment(ros::NodeHan
         ROS_ERROR("Failed to set cost_possibly_circumscribed_thresh parameter");
         exit(1);
     }
-
+    my_env_ = env;
     return env;
 }
 
@@ -103,6 +103,21 @@ bool GKI3dNavPlanner::initializeEnvironment(const std::vector<sbpl_2Dpt_t> & foo
             footprint, costmap_ros_->getCostmap()->getResolution(),
             trans_vel, timeToTurn45Degs,
             lethal_obstacle_, motion_primitive_filename.c_str());
+}
+
+bool GKI3dNavPlanner::makePlanFromScene(planning_scene::PlanningSceneConstPtr scene, const geometry_msgs::PoseStamped& goal, std::vector<geometry_msgs::PoseStamped>& plan)
+{
+    const robot_state::RobotState& state = scene->getCurrentState();
+    geometry_msgs::PoseStamped start;
+    start.pose.position.x = state.getVariablePosition("world_joint/x");
+    start.pose.position.y = state.getVariablePosition("world_joint/y");
+    start.pose.position.z = 0;
+    start.pose.orientation = tf::createQuaternionMsgFromYaw(state.getVariablePosition("world_joint/theta"));
+    start.header.frame_id = scene->getPlanningFrame();
+
+    my_env_->update_planning_scene(scene);
+    my_env_->publish_planning_scene();
+    return makePlan(start, goal, plan);
 }
 
 unsigned char GKI3dNavPlanner::determinePossiblyCircumscribedCostmapCost(costmap_2d::Costmap2DROS* costmap_ros)
