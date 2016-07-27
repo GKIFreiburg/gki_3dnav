@@ -39,7 +39,7 @@
 #include <gki_3dnav_planner/3dnav_planner.h>
 #include <pluginlib/class_list_macros.h>
 #include <nav_msgs/Path.h>
-#include <gki_3dnav_planner/PlannerStats.h>
+#include <gki_3dnav_msgs/PlannerStats.h>
 #include <sbpl/planners/planner.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <sstream>

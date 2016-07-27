@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <gki_3dnav_planner/SampleValidPoses.h>
+#include <gki_3dnav_msgs/SampleValidPoses.h>
 #include <geometry_msgs/PoseArray.h>
 #include <boost/foreach.hpp>
 #define forEach BOOST_FOREACH
@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 
     ros::Publisher pubPoses = nh.advertise<geometry_msgs::PoseArray>("valid_poses", 3);
 
-    gki_3dnav_planner::SampleValidPoses srv;
+    gki_3dnav_msgs::SampleValidPoses srv;
     srv.request.n = atoi(argv[1]);
     if(argc >= 3)
         srv.request.max_tries = atoi(argv[2]);

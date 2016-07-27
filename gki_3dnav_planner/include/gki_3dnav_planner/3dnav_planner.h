@@ -8,7 +8,7 @@
 #include "gki_3dnav_planner/environment_navxythetalat_moveit.h"
 #include <sbpl/headers.h>
 #include <geometry_msgs/Pose2D.h>
-#include <gki_3dnav_planner/SampleValidPoses.h>
+#include <gki_3dnav_msgs/SampleValidPoses.h>
 #include <nav_core/base_global_planner.h>
 #include "gki_3dnav_planner/sbpl_xytheta_planner.h"
 

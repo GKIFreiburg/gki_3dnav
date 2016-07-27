@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>full_body_nav_msgs</name>
+  <name>gki_3dnav_msgs</name>
   <version>0.0.0</version>
   <description>The full_body_nav_msgs package</description>
 

@@ -9,7 +9,7 @@
 #include <nav_core/base_global_planner.h>
 
 #include <sbpl/headers.h>
-#include <gki_3dnav_planner/SampleValidPoses.h>
+#include <gki_3dnav_msgs/SampleValidPoses.h>
 #include "gki_3dnav_planner/environment_navxythetalat_generic.h"
 
 namespace sbpl_xytheta_planner
@@ -56,7 +56,7 @@ public:
     virtual void readDynamicParameters();
 
 protected:
-    virtual bool sampleValidPoses(gki_3dnav_planner::SampleValidPoses::Request & req, gki_3dnav_planner::SampleValidPoses::Response & resp);
+    virtual bool sampleValidPoses(gki_3dnav_msgs::SampleValidPoses::Request & req, gki_3dnav_msgs::SampleValidPoses::Response & resp);
 
     /// Make sure that a ready to use environment exists.
     virtual bool createAndInitializeEnvironment();

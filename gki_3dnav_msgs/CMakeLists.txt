@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(full_body_nav_msgs)
+project(gki_3dnav_msgs)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -49,21 +49,22 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  PlannerStat.msg
+  PlannerStats.msg
+)
 
 ## Generate services in the 'srv' folder
  add_service_files(
-   FILES
-   FollowTrajectory.srv
-   FullBodyCollisionCheck.srv
-   GetBasePoses.srv
-   GetTwoArmPlan.srv
-   PushOutOfCollision.srv
- )
+  FILES
+  FollowTrajectory.srv
+  FullBodyCollisionCheck.srv
+  GetBasePoses.srv
+  SampleValidPoses.srv
+  GetTwoArmPlan.srv
+  PushOutOfCollision.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(

@@ -1,7 +1,7 @@
 #include <gki_3dnav_planner/sbpl_xytheta_planner.h>
 #include <nav_msgs/Path.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include <gki_3dnav_planner/PlannerStats.h>
+#include <gki_3dnav_msgs/PlannerStats.h>
 #include <sbpl/planners/planner.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <sstream>
@@ -71,7 +71,7 @@ void SBPLXYThetaPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* 
 
     ROS_INFO("sbpl_xytheta_planner: Initialized successfully");
     plan_pub_ = private_nh_->advertise<nav_msgs::Path>("plan", 1);
-    stats_publisher_ = private_nh_->advertise<gki_3dnav_planner::PlannerStats>("planner_stats", 10);
+    stats_publisher_ = private_nh_->advertise<gki_3dnav_msgs::PlannerStats>("planner_stats", 10);
     traj_pub_ = private_nh_->advertise<moveit_msgs::DisplayTrajectory>("trajectory", 5);
 
     expansions_publisher_ = private_nh_->advertise<visualization_msgs::MarkerArray>("expansions", 3, true);
@@ -166,11 +166,11 @@ void SBPLXYThetaPlanner::readDynamicParameters()
 
 void SBPLXYThetaPlanner::publishStats(int solution_cost, int solution_size, const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal)
 {
-    gki_3dnav_planner::PlannerStats stats;
+	gki_3dnav_msgs::PlannerStats stats;
     std::vector< ::PlannerStats > planner_stats;
     planner_->get_search_stats(&planner_stats);
     for(int i = 0; i < planner_stats.size(); ++i) {
-        gki_3dnav_planner::PlannerStat stat;
+    	gki_3dnav_msgs::PlannerStat stat;
         stat.eps = planner_stats[i].eps;
         stat.suboptimality = planner_stats[i].suboptimality;
         stat.time = planner_stats[i].time;
@@ -182,8 +182,8 @@ void SBPLXYThetaPlanner::publishStats(int solution_cost, int solution_size, cons
     stats_publisher_.publish(stats);
 }
 
-bool SBPLXYThetaPlanner::sampleValidPoses(gki_3dnav_planner::SampleValidPoses::Request & req,
-        gki_3dnav_planner::SampleValidPoses::Response & resp)
+bool SBPLXYThetaPlanner::sampleValidPoses(gki_3dnav_msgs::SampleValidPoses::Request & req,
+		gki_3dnav_msgs::SampleValidPoses::Response & resp)
 {
     geometry_msgs::Point min, max;
     if(!env_->getExtents(min.x, max.x, min.y, max.y))

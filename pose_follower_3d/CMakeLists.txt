@@ -12,11 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   costmap_2d
   nav_msgs
   octomap_server
-#  planning_models
-#  planning_environment
   moveit_msgs
 #  sbpl_3dnav_planner
-  full_body_nav_msgs
+  gki_3dnav_msgs
   visualization_msgs
   roscpp
 )
@@ -78,7 +76,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   full_body_nav_msgs
+#   gki_3dnav_msgs
 # )
 
 ###################################
@@ -92,8 +90,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES pose_follower_3d
-#  CATKIN_DEPENDS full_body_nav_msgs
+  LIBRARIES pose_follower_3d
+  CATKIN_DEPENDS gki_3dnav_msgs
   DEPENDS system_lib
 )
 
@@ -109,8 +107,8 @@ include_directories(
 )
 
 ## Declare a cpp library
-add_library(
-	pose_follower_3d src/pose_follower_3d.cpp
+add_library(pose_follower_3d 
+   src/pose_follower_3d.cpp
 )
 ## Declare a cpp executable
 # add_executable(pose_follower_3d_node src/pose_follower_3d_node.cpp)

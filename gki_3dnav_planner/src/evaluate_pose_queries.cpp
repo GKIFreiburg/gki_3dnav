@@ -2,14 +2,14 @@
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/GetPlan.h>
-#include <gki_3dnav_planner/PlannerStats.h>
+#include <gki_3dnav_msgs/PlannerStats.h>
 #include <yaml-cpp/emitter.h>
 #include <sstream>
 #include <boost/foreach.hpp>
 #define forEach BOOST_FOREACH
 
 std::vector< std::pair<geometry_msgs::PoseStamped, geometry_msgs::PoseStamped> > poseQueries;
-std::vector<gki_3dnav_planner::PlannerStats> g_Stats;
+std::vector<gki_3dnav_msgs::PlannerStats> g_Stats;
 bool g_StatsReceived;
 double minDist, maxDist;
 bool g_ReverseQueries = false;
@@ -46,7 +46,7 @@ void poseArrayCallback(const geometry_msgs::PoseArray & pa)
   }
 }
 
-void statsCallback(const gki_3dnav_planner::PlannerStats & stats)
+void statsCallback(const gki_3dnav_msgs::PlannerStats & stats)
 {
   g_Stats.push_back(stats);
   g_StatsReceived = true;
@@ -78,7 +78,7 @@ void collectData()
       if(count > 10) {
   if(err) {
     ROS_INFO("Inserting empty stats");
-    g_Stats.push_back(gki_3dnav_planner::PlannerStats());
+    g_Stats.push_back(gki_3dnav_msgs::PlannerStats());
     break;
   }
       }
@@ -115,7 +115,7 @@ class ParameterRun
         std::string paramName;
         XmlRpc::XmlRpcValue parameter;
 
-        std::vector<gki_3dnav_planner::PlannerStats> planner_stats;
+        std::vector<gki_3dnav_msgs::PlannerStats> planner_stats;
 
         static std::vector<ParameterRun> setupRuns(const std::string & paramName,
                 const std::vector<std::string> & paramValues) {
@@ -235,7 +235,7 @@ int main(int argc, char** argv)
       emitter << YAML::Value;
       emitter << YAML::BeginSeq;
       int stat_index = 0;
-      forEach(const gki_3dnav_planner::PlannerStats & ps, run.planner_stats) {
+      forEach(const gki_3dnav_msgs::PlannerStats & ps, run.planner_stats) {
           emitter << YAML::BeginMap;
           if(stat_index < poseQueries.size()) {
               emitter << YAML::Key;
@@ -251,7 +251,7 @@ int main(int argc, char** argv)
           emitter << "planner_stats";
           emitter << YAML::Value;
           emitter << YAML::BeginSeq;
-          forEach(const gki_3dnav_planner::PlannerStat & pss, ps.stats) {
+          forEach(const gki_3dnav_msgs::PlannerStat & pss, ps.stats) {
               emitter << YAML::BeginMap;
               writeKeyVal(emitter, "eps", pss.eps);
               writeKeyVal(emitter, "suboptimality", pss.suboptimality);

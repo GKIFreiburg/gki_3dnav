@@ -38,7 +38,6 @@
 
 #include "pose_follower_3d/pose_follower_3d.h"
 #include <pluginlib/class_list_macros.h>
-#include <full_body_nav_msgs/FullBodyCollisionCheck.h>
 
 PLUGINLIB_DECLARE_CLASS(pose_follower_3d, PoseFollower3D, pose_follower_3d::PoseFollower3D, nav_core::BaseLocalPlanner)
 
@@ -128,15 +127,15 @@ namespace pose_follower_3d
     //ANDREW collisions_sub_ = node.subscribe<moveit_msgs::CollisionObject>("octomap_collision_object", 1, boost::bind(&PoseFollower3D::collisionsCallback, this, _1));
     vel_pub_ = node.advertise<geometry_msgs::Twist>("cmd_vel", 10);
     //	robot_state_client_ = node.serviceClient<moveit_msgs::GetRobotState>("/environment_server/get_robot_state");
-    collision_check_client_ = node.serviceClient<full_body_nav_msgs::FullBodyCollisionCheck>("/sbpl_full_body_planning/collision_check");
-    recovery_service_ = node.advertiseService("/pose_follower_3d/push_out_of_collision", &PoseFollower3D::pushOutOfCollisionService,this);
-    trajectory_follower_service_ = node.advertiseService("/pose_follower_3d/follow_trajectory", &PoseFollower3D::followTrajectory,this);
+    collision_check_client_ = node.serviceClient<gki_3dnav_msgs::FullBodyCollisionCheck>("/sbpl_full_body_planning/collision_check");
+    recovery_service_ = node.advertiseService("pose_follower_3d/push_out_of_collision", &PoseFollower3D::pushOutOfCollisionService,this);
+    trajectory_follower_service_ = node.advertiseService("pose_follower_3d/follow_trajectory", &PoseFollower3D::followTrajectory,this);
 
     ROS_DEBUG("Initialized");
   }
 
-  bool PoseFollower3D::pushOutOfCollisionService(full_body_nav_msgs::PushOutOfCollision::Request &req,
-						 full_body_nav_msgs::PushOutOfCollision::Response &res){
+  bool PoseFollower3D::pushOutOfCollisionService(gki_3dnav_msgs::PushOutOfCollision::Request &req,
+						 gki_3dnav_msgs::PushOutOfCollision::Response &res){
     //Get the robot's pose
     geometry_msgs::TransformStamped geo_pose;
     tf::Stamped<tf::Pose> robot_pose;
@@ -219,8 +218,8 @@ namespace pose_follower_3d
 
 
 
-  bool PoseFollower3D::followTrajectory(full_body_nav_msgs::FollowTrajectory::Request &req,
-					full_body_nav_msgs::FollowTrajectory::Response &res)
+  bool PoseFollower3D::followTrajectory(gki_3dnav_msgs::FollowTrajectory::Request &req,
+					gki_3dnav_msgs::FollowTrajectory::Response &res)
   {
     //Get the robot's pose
     geometry_msgs::TransformStamped geo_pose;
@@ -430,8 +429,8 @@ namespace pose_follower_3d
     getRobotStateFromRobotPose(basePose, robotState);
 
     // collision check state obtained from robot_state service call
-    full_body_nav_msgs::FullBodyCollisionCheck::Request req;
-    full_body_nav_msgs::FullBodyCollisionCheck::Response res;
+    gki_3dnav_msgs::FullBodyCollisionCheck::Request req;
+    gki_3dnav_msgs::FullBodyCollisionCheck::Response res;
 
     req.robot_states.push_back(robotState);
 

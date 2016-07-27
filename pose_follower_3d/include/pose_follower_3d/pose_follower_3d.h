@@ -48,12 +48,9 @@
 #include <moveit_msgs/CollisionObject.h>
 #include <moveit_msgs/RobotState.h>
 #include <base_local_planner/trajectory_planner_ros.h>
-//#include <planning_environment/models/collision_models.h>
-//#include <planning_models/kinematic_state.h>
-//#include <moveit_msgs/GetRobotState.h>
-//#include <planning_environment/models/model_utils.h>
-#include <full_body_nav_msgs/PushOutOfCollision.h>
-#include <full_body_nav_msgs/FollowTrajectory.h>
+#include <gki_3dnav_msgs/PushOutOfCollision.h>
+#include <gki_3dnav_msgs/FollowTrajectory.h>
+#include <gki_3dnav_msgs/FullBodyCollisionCheck.h>
 #include <angles/angles.h>
 
 namespace pose_follower_3d
@@ -66,9 +63,9 @@ namespace pose_follower_3d
       bool isGoalReached();
       bool setPlan(const std::vector<geometry_msgs::PoseStamped>& global_plan);
       bool computeVelocityCommands(geometry_msgs::Twist& cmd_vel);
-      bool pushOutOfCollisionService(full_body_nav_msgs::PushOutOfCollision::Request &req,full_body_nav_msgs::PushOutOfCollision::Response &res);
-      bool followTrajectory(full_body_nav_msgs::FollowTrajectory::Request &req,
-              full_body_nav_msgs::FollowTrajectory::Response &res);
+      bool pushOutOfCollisionService(gki_3dnav_msgs::PushOutOfCollision::Request &req,gki_3dnav_msgs::PushOutOfCollision::Response &res);
+      bool followTrajectory(gki_3dnav_msgs::FollowTrajectory::Request &req,
+              gki_3dnav_msgs::FollowTrajectory::Response &res);
 
   private:
       inline double sign(double n)
@@ -139,6 +136,9 @@ namespace pose_follower_3d
       std::vector<double> rightArmAngles_;
       double spinePosition_;
       double trajectory_allowed_start_offset_;
+
+      std::string global_frame_id;
+      std::string base_frame_id;
   };
 };
 #endif
