@@ -10,17 +10,7 @@ GKI3dNavPlanner:
   force_scratch_limit: 0
   #expansion_color_scheme: occupancy
   expansion_color_scheme: costmap
-  trans_vel: 0.4
+  trans_vel: 0.8
   rot_vel: 1.3089969389957471827
 
   scene_update_name: /get_planning_scene
-  allowed_collision_links:
-    - br_caster_r_wheel_link
-    - br_caster_l_wheel_link
-    - bl_caster_r_wheel_link
-    - bl_caster_l_wheel_link
-    - fr_caster_r_wheel_link
-    - fr_caster_l_wheel_link
-    - fl_caster_r_wheel_link
-    - fl_caster_l_wheel_link
-

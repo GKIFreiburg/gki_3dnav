@@ -3,14 +3,17 @@
 
 #include <string>
 #include <vector>
+#include <boost/shared_ptr.hpp>
 #include <sbpl/discrete_space_information/environment_navxythetalat.h>
 
 namespace freespace_mechanism_heuristic
 {
 
+class HeuristicCostMap;
+typedef boost::shared_ptr<HeuristicCostMap> HeuristicCostMapPtr;
 class HeuristicCostMap
 {
-    friend void computeCosts(const EnvNAVXYTHETALATConfig_t & cfg, int theta, HeuristicCostMap & costmaps);
+    friend void computeCosts(const EnvNAVXYTHETALATConfig_t & cfg, int theta, HeuristicCostMapPtr & costmaps);
 
     public:
         /// How are queries outside the costmap answered

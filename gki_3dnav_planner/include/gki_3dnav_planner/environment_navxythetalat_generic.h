@@ -8,7 +8,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <moveit_msgs/DisplayTrajectory.h>
 #include <moveit/planning_scene/planning_scene.h>
-#include "freespace_mechanism_heuristic/freespace_mechanism_heuristic.h"
+#include <freespace_mechanism_heuristic/freespace_mechanism_heuristic.h>
+#include <gki_3dnav_utils/primitives_file_io.h>
 #include "timing/timing.h"
 
 struct ScopeExit
@@ -38,6 +39,8 @@ class EnvironmentNavXYThetaLatGeneric : public EnvironmentNAVXYTHETALAT
                 const std::vector<sbpl_2Dpt_t>& perimeterptsV, double cellsize_m,
                 double nominalvel_mpersecs, double timetoturn45degsinplace_secs,
                 unsigned char obsthresh, const char* sMotPrimFile);
+
+        virtual bool ReadMotionPrimitives(FILE* fMotPrim);
 
         /// Returns the tf frame that this env assumes all poses to be in.
         virtual std::string getPlanningFrame() const = 0;
@@ -82,7 +85,8 @@ class EnvironmentNavXYThetaLatGeneric : public EnvironmentNAVXYTHETALAT
     protected:
         ros::NodeHandle nhPriv_;
 
-        freespace_mechanism_heuristic::HeuristicCostMap* freespace_heuristic_costmap;
+        std::string freespace_heuristic_costmap_file_;
+        freespace_mechanism_heuristic::HeuristicCostMapPtr freespace_heuristic_costmap;
         bool useFreespaceHeuristic_;
 
         Timing* timeFreespace;

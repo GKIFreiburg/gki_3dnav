@@ -142,7 +142,7 @@ namespace pose_follower_3d
     try {
       tf::StampedTransform base_map_transform;
       //TODO: get global frame from somewhere
-      tf_->lookupTransform("map", "base_footprint", ros::Time(0), base_map_transform);
+      tf_->lookupTransform(costmap_ros_->getGlobalFrameID(), costmap_ros_->getBaseFrameID(), ros::Time(0), base_map_transform);
       transformStampedTFToMsg(base_map_transform, geo_pose);
       robot_pose.getOrigin().setX(base_map_transform.getOrigin().x());
       robot_pose.getOrigin().setY(base_map_transform.getOrigin().y());
@@ -195,8 +195,9 @@ namespace pose_follower_3d
 	  pose.pose.position.y = recovery_y;
 	  recovery_plan.push_back(pose);
 	  ROS_INFO("[PoseFollower3D] Recovery: planned trajectory:");
-	  for(size_t i = 0; i < recovery_plan.size(); ++i)
-	    ROS_INFO("[PoseFollower3D] [%d] x: %0.3f  y: %0.3f", recovery_plan[i].pose.position.x, recovery_plan[i].pose.position.y);
+	  for(size_t i = 0; i < recovery_plan.size(); ++i) {
+	    ROS_INFO("[PoseFollower3D] [%zu] x: %0.3f  y: %0.3f", i, recovery_plan[i].pose.position.x, recovery_plan[i].pose.position.y);
+	  }
 	  setPlan(recovery_plan);
 
 	  //now run the controller until we reach the recovery point
@@ -675,7 +676,7 @@ namespace pose_follower_3d
   {
     current_waypoint_ = 0;
     goal_reached_time_ = ros::Time::now();
-    ROS_INFO("Got global plan with %d waypoints",global_plan.size());
+    ROS_INFO("Got global plan with %zu waypoints",global_plan.size());
     ROS_INFO("Global frame id: %s",costmap_ros_->getGlobalFrameID().c_str());
     if (!transformGlobalPlan(*tf_, global_plan, *costmap_ros_, costmap_ros_->getGlobalFrameID(), global_plan_)) {
       ROS_ERROR("Could not transform the global plan to the frame of the controller");

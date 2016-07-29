@@ -39,7 +39,7 @@ const std::vector<int> * XYThetaStateChangeQuery::getSuccessors() const
 
 SBPLXYThetaPlanner::SBPLXYThetaPlanner() :
     initialized_(false), costmap_ros_(NULL), initial_epsilon_(0),
-    env_(NULL), force_scratch_limit_(0), planner_(NULL), allocated_time_(0)
+    env_(NULL), force_scratch_limit_(0), planner_(NULL), allocated_time_(0), private_nh_(NULL)
 {
 }
 
@@ -110,16 +110,19 @@ bool SBPLXYThetaPlanner::createAndInitializeEnvironment()
     }
 
     double trans_vel, rot_vel;
-    private_nh_->param("trans_vel", trans_vel, 0.4);
-    private_nh_->param("rot_vel", rot_vel, 1.3);
+    private_nh_->getParam("trans_vel", trans_vel);
+    private_nh_->getParam("rot_vel", rot_vel);
     std::string motion_primitive_filename;
     private_nh_->param("motion_primitive_filename", motion_primitive_filename, std::string(""));
 
     bool ret = true;
     try {
-        double timeToTurn45Degs = M_PI/4.0/rot_vel;
+        double timeToTurn45Degs = M_PI_4/rot_vel;
         ret = initializeEnvironment(footprintPoints, trans_vel, timeToTurn45Degs, motion_primitive_filename);
     } catch(SBPL_Exception& e) {
+        ROS_ERROR("SBPL encountered a fatal exception initializing the environment!");
+        ret = false;
+    } catch(SBPL_Exception* e) {
         ROS_ERROR("SBPL encountered a fatal exception initializing the environment!");
         ret = false;
     }

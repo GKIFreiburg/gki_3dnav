@@ -136,9 +136,6 @@ namespace pose_follower_3d
       std::vector<double> rightArmAngles_;
       double spinePosition_;
       double trajectory_allowed_start_offset_;
-
-      std::string global_frame_id;
-      std::string base_frame_id;
   };
 };
 #endif

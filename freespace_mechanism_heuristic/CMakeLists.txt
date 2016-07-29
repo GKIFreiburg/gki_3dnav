@@ -6,6 +6,7 @@ project(freespace_mechanism_heuristic)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  gki_3dnav_utils
 )
 
 ## System dependencies are found with CMake's conventions
@@ -122,6 +123,7 @@ include_directories(
 
 ## Declare a C++ library
 add_library(freespace_mechanism_heuristic
+  src/compute_heuristic.cpp
   src/freespace_mechanism_heuristic.cpp
 )
 target_link_libraries(freespace_mechanism_heuristic ${catkin_LIBRARIES} ${SBPL_LIBRARIES})
@@ -132,7 +134,7 @@ target_link_libraries(freespace_mechanism_heuristic ${catkin_LIBRARIES} ${SBPL_L
 # add_dependencies(freespace_mechanism_heuristic ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(compute_freespace_mechanism_heuristic src/compute_heuristic.cpp)
+add_executable(compute_freespace_mechanism_heuristic src/main.cpp)
 target_link_libraries(compute_freespace_mechanism_heuristic ${SBPL_LIBRARIES} ${catkin_LIBRARIES} freespace_mechanism_heuristic)
 
 add_executable(print_costmap_images src/print_costmap_images.cpp)

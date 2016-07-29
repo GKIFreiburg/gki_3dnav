@@ -1,39 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(gki_3dnav_planner)
+project(gki_3dnav_utils)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  tf
-  tf_conversions
-  moveit_msgs
-  moveit_ros_planning_interface
-  nav_core
-  nav_msgs
-  std_msgs
-  std_srvs
-  nav_msgs
-  gki_3dnav_msgs
-  gki_3dnav_utils
-  visualization_msgs
-  color_tools
-  angles
-  timing
-  interactive_markers
-  freespace_mechanism_heuristic
-)
+find_package(catkin REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(sbpl REQUIRED)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(SBPL REQUIRED sbpl)
-include_directories(${SBPL_INCLUDE_DIRS})
-link_directories(${SBPL_LIBRARY_DIRS})
-
-include_directories(SYSTEM ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE_DIRS})
-include_directories(${catkin_INCLUDE_DIRS})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -49,10 +25,10 @@ include_directories(${catkin_INCLUDE_DIRS})
 ## * Let MSG_DEP_SET be the set of packages whose message types you use in
 ##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
 ## * In the file package.xml:
+##   * add a build_depend tag for "message_generation"
 ##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependencies might have been
-##     pulled in transitively but can be declared for certainty nonetheless:
-##     * add a build_depend tag for "message_generation"
+##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
+##     but can be declared for certainty nonetheless:
 ##     * add a run_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
@@ -67,14 +43,15 @@ include_directories(${catkin_INCLUDE_DIRS})
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
-#   PlannerStat.msg
-#   PlannerStats.msg
+#   Message1.msg
+#   Message2.msg
 # )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
-#   SampleValidPoses.srv
+#   Service1.srv
+#   Service2.srv
 # )
 
 ## Generate actions in the 'action' folder
@@ -87,7 +64,27 @@ include_directories(${catkin_INCLUDE_DIRS})
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   moveit_msgs geometry_msgs
+#   std_msgs  # Or other packages containing msgs
+# )
+
+################################################
+## Declare ROS dynamic reconfigure parameters ##
+################################################
+
+## To declare and build dynamic reconfigure parameters within this
+## package, follow these steps:
+## * In the file package.xml:
+##   * add a build_depend and a run_depend tag for "dynamic_reconfigure"
+## * In this file (CMakeLists.txt):
+##   * add "dynamic_reconfigure" to
+##     find_package(catkin REQUIRED COMPONENTS ...)
+##   * uncomment the "generate_dynamic_reconfigure_options" section below
+##     and list every .cfg file to be processed
+
+## Generate dynamic reconfigure parameters in the 'cfg' folder
+# generate_dynamic_reconfigure_options(
+#   cfg/DynReconf1.cfg
+#   cfg/DynReconf2.cfg
 # )
 
 ###################################
@@ -101,60 +98,46 @@ include_directories(${catkin_INCLUDE_DIRS})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES sbpl_xytheta_planner gki_3dnav_planner 
-  CATKIN_DEPENDS moveit_msgs nav_core nav_msgs std_msgs std_srvs visualization_msgs gki_3dnav_msgs freespace_mechanism_heuristic timing
-  DEPENDS system_lib
+  LIBRARIES gki_3dnav_utils
+#  CATKIN_DEPENDS other_catkin_pkg
+  DEPENDS sbpl
 )
 
 ###########
 ## Build ##
 ###########
 
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+# include_directories(include)
+# TODO: Check names of system library include directories (sbpl)
 include_directories(include)
 include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
-add_definitions(${EIGEN_DEFINITIONS})
-
-add_library(sbpl_xytheta_planner
-    src/sbpl_xytheta_planner.cpp
-    src/environment_navxythetalat_generic.cpp
-)
-target_link_libraries(sbpl_xytheta_planner
-    ${catkin_LIBRARIES}
-    ${SBPL_LIBRARIES} 
-    ${Boost_LIBRARIES})
-
-add_library(gki_3dnav_planner
-    src/environment_xyt_3d_collisions.cpp
-    src/environment_navxythetalat_moveit.cpp
-    src/3dnav_planner.cpp
+  ${sbpl_INCLUDE_DIRS}
 )
 
-target_link_libraries(gki_3dnav_planner
-	${catkin_LIBRARIES}
-	${SBPL_LIBRARIES} 
-	${Boost_LIBRARIES}
-    sbpl_xytheta_planner
+## Declare a C++ library
+add_library(gki_3dnav_utils
+  src/primitives_file_io.cpp
 )
 
-add_executable(sample_valid_poses
-    src/sample_valid_poses.cpp)
-target_link_libraries(sample_valid_poses
-    ${catkin_LIBRARIES})
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+# add_dependencies(gki_3dnav_utils ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(evaluate_pose_queries
-    src/evaluate_pose_queries.cpp)
-target_link_libraries(evaluate_pose_queries
-    ${catkin_LIBRARIES}
-    yaml-cpp)
+## Declare a C++ executable
+# add_executable(gki_3dnav_utils_node src/gki_3dnav_utils_node.cpp)
 
-add_executable(visual_path_planning_node src/VisualPathPlannerNode.cpp)
-target_link_libraries(visual_path_planning_node
-	${catkin_LIBRARIES}
-	${Boost_LIBRARIES}
+## Add cmake target dependencies of the executable
+## same as for the library above
+# add_dependencies(gki_3dnav_utils_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(gki_3dnav_utils
+  ${catkin_LIBRARIES}
+  ${sbpl_LIBRARIES}
 )
-
 
 #############
 ## Install ##
@@ -171,7 +154,7 @@ target_link_libraries(visual_path_planning_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS gki_3dnav_planner gki_3dnav_planner_node
+# install(TARGETS gki_3dnav_utils gki_3dnav_utils_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -196,7 +179,7 @@ target_link_libraries(visual_path_planning_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_gki_3dnav_planner.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_gki_3dnav_utils.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
