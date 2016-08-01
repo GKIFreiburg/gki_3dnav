@@ -74,10 +74,11 @@ bool EnvironmentNavXYThetaLatGeneric::InitializeEnv(int width, int height, const
 			else
 			{
 				ROS_INFO_STREAM("freespace heuristic costmap generation succeeded. Saving costmap to file "<<freespace_heuristic_costmap_file_);
-				std::string freespace_heuristic_costmap_file;
-				freespace_heuristic_costmap->saveCostMap(freespace_heuristic_costmap_file);
-				ROS_INFO_STREAM("new trans_vel "<<freespace_heuristic_costmap->getTransVelCellsPerSec() * cellsize_m);
-				ROS_INFO_STREAM("new rot_vel "<<freespace_heuristic_costmap->getRotVel());
+				bool success = freespace_heuristic_costmap->saveCostMap(freespace_heuristic_costmap_file_);
+				if (! success)
+				{
+					ROS_WARN_STREAM("map save failed. path: "<<freespace_heuristic_costmap_file_);
+				}
 			}
 		}
 	}

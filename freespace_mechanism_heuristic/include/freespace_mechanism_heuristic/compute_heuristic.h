@@ -88,8 +88,8 @@ int generateHeuristicMap(
 		double resolution,
 		double linear_velocity = 0.8,
 		double angular_velocity = 1.308997,
-		int size_x = 300,
-		int size_y = 300);
+		int size_x = 250,
+		int size_y = 250);
 
 }
 
