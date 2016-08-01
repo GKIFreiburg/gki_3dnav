@@ -102,8 +102,18 @@ include_directories(${catkin_INCLUDE_DIRS})
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES sbpl_xytheta_planner gki_3dnav_planner 
-  CATKIN_DEPENDS moveit_msgs nav_core nav_msgs std_msgs std_srvs visualization_msgs gki_3dnav_msgs freespace_mechanism_heuristic timing
-  DEPENDS system_lib
+  CATKIN_DEPENDS 
+    moveit_msgs 
+    nav_core 
+    nav_msgs 
+    std_msgs 
+    std_srvs 
+    visualization_msgs 
+    gki_3dnav_msgs 
+    gki_3dnav_utils 
+    freespace_mechanism_heuristic 
+    timing
+  DEPENDS system_lib sbpl
 )
 
 ###########
@@ -132,9 +142,9 @@ add_library(gki_3dnav_planner
 )
 
 target_link_libraries(gki_3dnav_planner
-	${catkin_LIBRARIES}
-	${SBPL_LIBRARIES} 
-	${Boost_LIBRARIES}
+    ${catkin_LIBRARIES}
+    ${SBPL_LIBRARIES} 
+    ${Boost_LIBRARIES}
     sbpl_xytheta_planner
 )
 
